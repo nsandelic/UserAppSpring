@@ -1,6 +1,9 @@
 package hr.java.sandelic.UserApp.security.web;
 
 
+import hr.java.sandelic.UserApp.User.UserCommand;
+import hr.java.sandelic.UserApp.User.UserDTO;
+import hr.java.sandelic.UserApp.User.UserService;
 import hr.java.sandelic.UserApp.security.jwt.JwtFilter;
 import hr.java.sandelic.UserApp.security.jwt.TokenProvider;
 import org.springframework.http.HttpHeaders;
@@ -22,11 +25,14 @@ public class LoginController {
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private UserService userService;
 
-    public LoginController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public LoginController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.userService = userService;
     }
+
 
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authenticate(@Valid @RequestBody LoginController.LoginDTO login) {
@@ -45,6 +51,16 @@ public class LoginController {
 
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> save(@Valid @RequestBody final UserCommand command){
+        UserDTO newUserDTO = userService.save(command);
+        if (newUserDTO == null)
+            return new ResponseEntity<UserDTO>(HttpStatus.CONFLICT);
+        else return new ResponseEntity<UserDTO>( newUserDTO,  HttpStatus.CREATED );
+    }
+
 
 
     /**

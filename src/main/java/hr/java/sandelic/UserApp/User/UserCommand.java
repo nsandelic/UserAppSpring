@@ -21,6 +21,7 @@ public class UserCommand {
     @NotBlank(message = "Password must not be empty")
     private String password;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Date of birth must be entered")
     @Past(message = "Date of birth must be in the past")
     private LocalDate dob;
